@@ -13,12 +13,8 @@ import pandas as pd
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 
-try:
-    import plotly.express as px
-    import plotly.graph_objects as go
-    PLOTLY_AVAILABLE = True
-except Exception:
-    PLOTLY_AVAILABLE = False
+import plotly.graph_objects as go
+
 
 
 class App(Tk):
@@ -62,8 +58,6 @@ class App(Tk):
         self.btn_show_mpl.grid(row=row, column=0, padx=10, pady=6)
 
         plotly_text = "Stwórz wykres w przeglądarce [Plotly]"
-        if not PLOTLY_AVAILABLE:
-            plotly_text += " [niedostepne]"
         self.btn_show_plotly = ttk.Button(self, text=plotly_text, command=self._open_plotly_window)
         self.btn_show_plotly.grid(row=row, column=1, padx=10, pady=6)
 
@@ -83,7 +77,7 @@ class App(Tk):
             return
         try:
             self.data = pd.read_csv(filepath, sep=r"\s+", header=None, names=['X', 'Y', 'Z'])
-            self.info_lbl.config(text=f"Loaded: {os.path.basename(filepath)} [{len(self.data)} records].")
+            self.info_lbl.config(text=f"Wczytano: {os.path.basename(filepath)} [{len(self.data)} rekordów].")
         except Exception as e:
             mb.showerror("Błąd wczytywania", f"Podczas wczytywania pliku pojawił się błąd:\n{e}")
 
@@ -201,9 +195,6 @@ class App(Tk):
 
     def _open_plotly_window(self):
         """Open a Plotly 3D scatter plot in the browser with a color toggle menu."""
-        if not PLOTLY_AVAILABLE:
-            mb.showerror("Nie wykryto plotly", "Nie wykryto plotly. Zainstaluj je komendą:\n pip install plotly")
-            return
         if self.data is None:
             mb.showwarning("Brak danych", "Proszę wczytać plik z danymi.")
             return
